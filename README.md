@@ -119,5 +119,22 @@ Este projeto faz parte de um estudo prático de desenvolvimento de APIs REST com
 
 
 
-### 1. Clonar o repositório
+## 📚 Documentação da API
 
+A documentação da API é gerada automaticamente usando **Swagger (Flasgger)**.
+
+Após iniciar o servidor Flask:
+
+```bash
+python app.py
+```
+
+Acesse:
+
+http://localhost:5000/apidocs
+
+Lá será possível:
+
+- visualizar todos os endpoints
+- ver parâmetros necessários
+- testar requisições diretamente pelo navegador
