@@ -126,7 +126,7 @@ A documentação da API é gerada automaticamente usando **Swagger (Flasgger)**.
 Após iniciar o servidor Flask:
 
 ```bash
-python app.py
+python run.py
 ```
 
 Acesse:
