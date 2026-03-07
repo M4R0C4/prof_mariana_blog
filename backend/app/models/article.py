@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from .. import db
 
 class Article(db.Model):
@@ -15,7 +15,7 @@ class Article(db.Model):
 
     reading_time = db.Column(db.Integer)
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     def to_dict(self):
         return {
@@ -24,5 +24,5 @@ class Article(db.Model):
             "slug": self.slug,
             "content": self.content,
             "reading_time": self.reading_time,
-            "created_at": self.created_at.isoformat()
+            "created_at": self.created_at.isoformat() if self.created_at else None
         }
