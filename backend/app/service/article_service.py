@@ -12,8 +12,11 @@ class ArticleService:
         return Article.query.filter_by(slug=slug).first()
 
     @staticmethod
-    def create(data):
+    def get_by_id(id):
+        return Article.query.filter_by(id=id).first()
 
+    @staticmethod
+    def create(data):
         article = Article(
             title=data["title"],
             slug=data["slug"],

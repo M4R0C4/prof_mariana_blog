@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, request
 from ..service.article_service import ArticleService
+from .. import db
+from app.models.article import Article
 
 article_bp = Blueprint("articles", __name__, url_prefix="/articles")
 
@@ -58,29 +60,51 @@ def get_article(slug):
 @article_bp.route("/", methods=["POST"])
 def create_article():
     """
-    Criar novo artigo
+    Listar todos os artigos
     ---
-    parameters:
-      - name: article
-        in: body
-        required: true
-        schema:
-          type: object
-          properties:
-            title:
-              type: string
-            slug:
-              type: string
-            content:
-              type: string
-            reading_time:
-              type: integer
     responses:
-      201:
-        description: Artigo criado
+      200:
+        description: Lista de artigos
+        examples:
+          application/json: [
+            {
+              "id": 1,
+              "title": "Como estudar programação",
+              "slug": "como-estudar-programacao",
+              "content": "Conteúdo do artigo...",
+              "reading_time": 5
+            }
+          ]
     """
     data = request.json
 
     article = ArticleService.create(data)
 
     return jsonify(article.to_dict()), 201
+
+@article_bp.route("/<int:id>", methods=["GET", "PATCH", "PUT", "DELETE"])
+def delete_upgrade_article(id):
+    """
+    Deleta e atualiza artigo por id
+    """
+    article = ArticleService.get_by_id(id)
+
+    if not article:
+        return jsonify({"error": "Article not found"}), 404
+
+    
+    
+    if request.method == "DELETE":
+        db.session.delete(article)
+        db.session.commit()
+        return jsonify({"message": "Article deleted successfully"}), 200
+
+    elif request.method in ["PUT","PATCH"]:
+        data = request.get_json()
+        article.title = data.get("title", article.title)
+        article.slug = data.get("slug", article.slug)
+        article.content = data.get("content", article.content)
+        article.reading_time = data.get("reading_time", article.reading_time)
+        db.session.commit()
+        return jsonify(article.to_dict()), 200    
+    return jsonify(article.to_dict()), 200
