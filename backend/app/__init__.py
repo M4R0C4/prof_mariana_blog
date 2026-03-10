@@ -21,6 +21,8 @@ def create_app():
 
 
     from .routes.article_routes import article_bp
+    from .routes.auth_routes import auth_bp
     app.register_blueprint(article_bp)
+    app.register_blueprint(auth_bp)
 
     return app
