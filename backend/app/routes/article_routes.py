@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from ..service.article_service import ArticleService
 from .. import db
 from app.models.article import Article
+from flask_jwt_extended import jwt_required
 
 article_bp = Blueprint("articles", __name__, url_prefix="/articles")
 
@@ -58,6 +59,7 @@ def get_article(slug):
 
 
 @article_bp.route("/", methods=["POST"])
+@jwt_required()
 def create_article():
     """
     Listar todos os artigos
