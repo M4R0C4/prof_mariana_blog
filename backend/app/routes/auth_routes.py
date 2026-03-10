@@ -46,3 +46,36 @@ def register():
             "email": user.email
         }
     }), 201
+
+@auth_bp.route("/login", methods=["POST"])
+def login():
+    """
+    Login de usuário
+    """
+
+    data = request.get_json()
+
+    email = data.get("email")
+    password = data.get("password")
+
+    if not email or not password:
+        return jsonify({"error": "Email and password are required"}), 400
+
+    # buscar usuário
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        return jsonify({"error": "Invalid credentials"}), 401
+
+    # verificar senha
+    if not user.check_password(password):
+        return jsonify({"error": "Invalid credentials"}), 401
+
+    return jsonify({
+        "message": "Login successful",
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email
+        }
+    }), 200
