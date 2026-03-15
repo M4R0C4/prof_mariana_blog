@@ -1,8 +1,10 @@
 from flask import Blueprint, jsonify, request
+
+from ..models.user import User
 from ..service.article_service import ArticleService
 from .. import db
 from app.models.article import Article
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
 article_bp = Blueprint("articles", __name__, url_prefix="/articles")
 
@@ -78,13 +80,19 @@ def create_article():
             }
           ]
     """
+    user_id = get_jwt_identity()
+    user = User.query.get(int(user_id))
     data = request.json
 
+    if not user:
+        return jsonify({"error":"User not found"}), 404
+    
     article = ArticleService.create(data)
 
     return jsonify(article.to_dict()), 201
 
 @article_bp.route("/<int:id>", methods=["GET", "PATCH", "PUT", "DELETE"])
+@jwt_required()
 def delete_upgrade_article(id):
     """
     Deleta e atualiza artigo por id

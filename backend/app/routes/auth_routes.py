@@ -55,7 +55,6 @@ def login():
     """
 
     data = request.get_json()
-
     email = data.get("email")
     password = data.get("password")
 
@@ -72,7 +71,7 @@ def login():
     if not user.check_password(password):
         return jsonify({"error": "Invalid credentials"}), 401
 
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
 
     return jsonify({
         "message": "Login successful",
