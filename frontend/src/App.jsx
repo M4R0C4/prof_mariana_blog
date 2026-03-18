@@ -1,4 +1,3 @@
-// src/App.jsx
 function App() {
   return (
     <div className="app-container">
@@ -8,3 +7,4 @@ function App() {
 }
 
 export default App
+
