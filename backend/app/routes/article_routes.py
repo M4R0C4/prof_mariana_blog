@@ -82,12 +82,12 @@ def create_article():
     """
     user_id = get_jwt_identity()
     user = User.query.get(int(user_id))
-    data = request.json
 
     if not user:
         return jsonify({"error":"User not found"}), 404
     
-    article = ArticleService.create(data)
+    data = request.json
+    article = ArticleService.create(data,author_id=int(user_id))
 
     return jsonify(article.to_dict()), 201
 

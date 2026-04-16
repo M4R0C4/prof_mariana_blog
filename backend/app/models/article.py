@@ -4,18 +4,14 @@ from .. import db
 class Article(db.Model):
 
     __tablename__ = "articles"
-
     id = db.Column(db.Integer, primary_key=True)
-
     title = db.Column(db.String(200), nullable=False)
-
     slug = db.Column(db.String(200), unique=True, nullable=False)
-
     content = db.Column(db.Text, nullable=False)
-
     reading_time = db.Column(db.Integer)
-
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    author = db.relationship('User', backref='articles')
 
     def to_dict(self):
         return {

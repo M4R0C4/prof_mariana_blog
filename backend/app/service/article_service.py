@@ -16,15 +16,14 @@ class ArticleService:
         return Article.query.filter_by(id=id).first()
 
     @staticmethod
-    def create(data):
+    def create(data, author_id):
         article = Article(
-            title=data["title"],
-            slug=data["slug"],
-            content=data["content"],
-            reading_time=data.get("reading_time")
+        title=data['title'],
+        slug=data['slug'],
+        content=data['content'],
+        reading_time=data.get('reading_time'),
+        author_id=author_id, # ← NOVO
         )
-
         db.session.add(article)
         db.session.commit()
-
         return article
