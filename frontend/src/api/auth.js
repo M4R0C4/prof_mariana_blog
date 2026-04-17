@@ -1,6 +1,10 @@
 import api from './client';
 
 export const authService = {
-  login: (username, password) => api.post('/auth/login', { username, password }),
+  login: (email, password) => api.post('/auth/login', { email, password }),
   getMe: () => api.get('/auth/me'),
+
+  register: (username, password, email) => {
+  return api.post('/auth/register', { username, password, email });
+},
 };

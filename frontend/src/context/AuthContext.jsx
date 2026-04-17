@@ -24,8 +24,8 @@ export const AuthProvider = ({ children }) => {
     loadUser();
   }, []);
 
-  const login = async (username, password) => {
-    const { data } = await authService.login(username, password);
+  const login = async (email, password) => {
+    const { data } = await authService.login(email, password);
     localStorage.setItem('token', data.access_token);
     // Após salvar o token, buscamos os dados do usuário
     const userResponse = await authService.getMe();
@@ -36,13 +36,23 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     setUser(null);
   };
+  // Register
+const register = async (username, password, email) => {
+  // Chamamos o serviço de API (que vamos criar no passo 2)
+  await authService.register(username, password, email);
+  
+  // Opcional: Você pode chamar o login(username, password) aqui dentro
+  // para que o usuário já entre direto após se registrar!
+};
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading, authenticated: !!user }}>
+    <AuthContext.Provider value={{ user, register, login, logout, loading, authenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+
 
 // Hook customizado para facilitar o uso nos componentes
 export const useAuth = () => useContext(AuthContext);
