@@ -21,8 +21,11 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/login'; // Redirecionamento forçado em caso de token inválido
+      const isRehydrating = error.config.url === '/auth/me'
+      if (!isRehydrating){
+        localStorage.removeItem('token');
+        window.location.href = '/login'; // Redirecionamento forçado em caso de token inválido
+      }
     }
     return Promise.reject(error);
   }

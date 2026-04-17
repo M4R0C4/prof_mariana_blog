@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 
@@ -27,11 +27,10 @@ class User(db.Model):
 
     created_at = db.Column(
         db.DateTime,
-        default=datetime.now()
+        default=lambda: datetime.now(timezone.utc)
     )
 
-    # -------- Password Methods --------
-
+    # -------- Password Methods / Metodos da Senha --------
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 

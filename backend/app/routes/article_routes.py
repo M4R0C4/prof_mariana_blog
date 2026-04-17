@@ -5,6 +5,7 @@ from ..service.article_service import ArticleService
 from .. import db
 from app.models.article import Article
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from slugify import slugify
 
 article_bp = Blueprint("articles", __name__, url_prefix="/articles")
 
@@ -82,14 +83,43 @@ def create_article():
     """
     user_id = get_jwt_identity()
     user = User.query.get(int(user_id))
+    data = request.get_json()
 
+    # Verifica se o usuário existe
     if not user:
         return jsonify({"error":"User not found"}), 404
     
-    data = request.json
-    article = ArticleService.create(data,author_id=int(user_id))
+    # Verifica se o body veio como JSON
+    if not data:
+        return jsonify({'error': 'Request body must be JSON'}), 400
 
+    # Verifica campos obrigatórios
+    required = ['title', 'slug', 'content']
+    missing = [field for field in required if not data.get(field)]
+    if missing:
+      return jsonify({'error': f'Missing fields: {missing}'}), 400
+    
+    # Gera o slug se não foi enviado
+    if not data.get('slug'):
+      data['slug'] = slugify(data['title'])
+
+
+    # Verifica slug duplicado antes de criar
+    existing = Article.query.filter_by(slug=data['slug']).first()
+    if existing:
+      return jsonify({'error': 'Este slug já está em uso. Escolha outro.'}), 409
+    
+    # Garante unicidade adicionando sufixo se necessário
+    base_slug = data['slug']
+    counter = 1
+    while Article.query.filter_by(slug=data['slug']).first():
+        data['slug'] = f'{base_slug}-{counter}'
+        counter += 1
+
+        
+    article = ArticleService.create(data,author_id=int(user_id))
     return jsonify(article.to_dict()), 201
+
 
 @article_bp.route("/<int:id>", methods=["GET", "PATCH", "PUT", "DELETE"])
 @jwt_required()
